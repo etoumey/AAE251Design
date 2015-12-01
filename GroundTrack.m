@@ -1,7 +1,7 @@
 clear
 clc
 
-B = 120;  %[degrees] N launch azimuth
+B = 135;  %[degrees] N launch azimuth
 Lat = 28.4556;  %[degrees] N launch latitude 
 Long = 80.5278;  %[degrees] W launch longitude
 LatRad = Lat*2*pi/360;
