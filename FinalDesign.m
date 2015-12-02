@@ -46,17 +46,15 @@ ISP3 = 316; %[s]
 Fin1 = 0.091; %0.08;
 Fin2 = 0.097; %0.13;
 Fin3 = .1;  %Estimate
-delta_i = 45; %[degrees] desired plane change
-B = 135;  %[degrees] N launch azimuth
+B = 90;  %[degrees] N launch azimuth
 Lat = 28.4556;  %[degrees] N launch latitude 
 Long = 80.5278;  %[degrees] W launch longitude
 LatRad = Lat*2*pi/360;
 LongRad = Long*2*pi/360;
 SRSm_pay = 500; %[kg] payload SRS carries 
 SRSm_sat = 5715.26386; %[kg] weight of captured satellite
-
-
-
+launchInclination = acosd(sind(B)*cosd(Lat));
+delta_i = 90-launchInclination; %[degrees] desired plane change
 
 %--SRS Stage Calculations--
 ro = 200+r_earth;
@@ -87,3 +85,23 @@ str = sprintf('Ratio of Delta V1 vs Initial Mass of Rocket\nOptimal Delta V1 Per
 title(str);
 xlabel('Ratio of Delta V1 to Total Delta V')
 ylabel('Initial Mass of Rocket [kg]')
+
+%---Single Stage---
+m1_0 = (SRSm.*(exp(delv_tot./(g0.*ISP))).*(1-f_inert))./(1-f_inert.*exp(delv_tot./(g0.*ISP)));
+m1_prop_tot = (SRSm.*(exp(delv_tot./(g0.*ISP)) - 1).*(1-f_inert))./(1-f_inert.*exp(delv_tot./(g0.*ISP)));
+m1_inert_tot = (SRSm.*f_inert.*(exp(delv_tot./(g0.*ISP))-1))./(1-f_inert.*exp(delv_tot./(g0.*ISP)));
+
+m_prop2_0 = (m0_2.*(exp(delV1./(g0.*ISP1)) - 1).*(1-Fin1))./(1-Fin1.*exp(delV1./(g0.*ISP1))); %Stage 1
+m_inert2_0 = (m0_2.*Fin1.*(exp(delV1./(g0.*ISP1))-1))./(1-Fin1.*exp(delV1./(g0.*ISP1))); %Stage 1
+
+m_prop2_2 = (SRSm.*(exp(delV2./(g0.*ISP2)) - 1).*(1-Fin2))./(1-Fin2.*exp(delV2./(g0.*ISP2))); %Stage 2
+m_inert2_2 = (SRSm.*Fin2.*(exp(delV2./(g0.*ISP2))-1))./(1-Fin2.*exp(delV2./(g0.*ISP2))); %Stage 2
+
+m2_prop_tot = m_prop2_2 + m_prop2_0;
+m2_inert_tot = m_inert2_2 + m_inert2_0;
+
+%---Cost---
+c_2 = m2_inert_tot.*1000 + m2_prop_tot.*30; %Cost of 2 stage [kg]*[$/kg] = [$]
+c_1 = m1_inert_tot.*1000 + m1_prop_tot.*30; %Cost of 1 stage
+
+
