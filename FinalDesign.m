@@ -19,8 +19,7 @@
 %  Outputs:                                                               %
 %  1. m0 - Initial mass of two stage rocket                               %
 %                                                                         % 
-%  Script Description: This script calculates the initial mass of a two   %
-%  stage rocket                                                           %
+%  Script Description: This script is to optimize launch profile          %
 %                                                                         %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
