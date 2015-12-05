@@ -28,18 +28,6 @@ deltaV1 = sqrt(2*((u/ro)-(u/(2*a)))) - vo;
 
 deltaV2 = sqrt(u/raTrans) - sqrt(2*((u/raTrans)-(u/(2*a))));
 
-r1 = 200;
-r2 = 1000;
-e = ((raTrans+rpTrans)/raTrans)
-
-theta = [0:0.01:2*pi];
-polar(theta, r1+(theta*0))
-hold on
-%polar(theta, raTrans*sin(theta)+rpTrans*cos(theta))
-%hold on
-polar(theta, r2+(theta*0))
-
-
 
 
 
