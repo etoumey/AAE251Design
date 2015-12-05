@@ -69,7 +69,8 @@ SRSm_prop = (SRSm_pay*exp((SRSdeltaV1+SRSdeltaV3)/(.0098*316))*(1-Fin3))/(1-(Fin
 SRSm = (SRSm_prop+SRSm_pay)*(1+Fin3);
 
 %--Launch Stage Split--
-delv_tot = sqrt(u_earth/(r_earth+200))  + delV_grav + delV_drag + delV_steer; % [m/s] Delta V required for circular flight at this altitude
+delV_earth = (r_earth*2*pi/(24*60*60))*cosd(LatRad); %WHAT ABOUT AZIMUTH
+delv_tot = sqrt(u_earth/(r_earth+200))  + delV_grav + delV_drag + delV_steer - delV_earth; % [km/s] Delta V required for circular flight at this altitude
 x = linspace(0.1,.6,1000);
 delV1 = delv_tot .* x;
 delV2 = delv_tot - delV1;
@@ -87,21 +88,17 @@ xlabel('Ratio of Delta V1 to Total Delta V')
 ylabel('Initial Mass of Rocket [kg]')
 
 %---Single Stage---
-m1_0 = (SRSm.*(exp(delv_tot./(g0.*ISP))).*(1-f_inert))./(1-f_inert.*exp(delv_tot./(g0.*ISP)));
-m1_prop_tot = (SRSm.*(exp(delv_tot./(g0.*ISP)) - 1).*(1-f_inert))./(1-f_inert.*exp(delv_tot./(g0.*ISP)));
-m1_inert_tot = (SRSm.*f_inert.*(exp(delv_tot./(g0.*ISP))-1))./(1-f_inert.*exp(delv_tot./(g0.*ISP)));
+m_prop2_0 = (m0_2(ind).*(exp(delV1(ind)./(g0.*ISP1)) - 1).*(1-Fin1))./(1-Fin1.*exp(delV1(ind)./(g0.*ISP1))); %Stage 1
+m_inert2_0 = (m0_2(ind).*Fin1.*(exp(delV1(ind)./(g0.*ISP1))-1))./(1-Fin1.*exp(delV1(ind)./(g0.*ISP1))); %Stage 1
 
-m_prop2_0 = (m0_2.*(exp(delV1./(g0.*ISP1)) - 1).*(1-Fin1))./(1-Fin1.*exp(delV1./(g0.*ISP1))); %Stage 1
-m_inert2_0 = (m0_2.*Fin1.*(exp(delV1./(g0.*ISP1))-1))./(1-Fin1.*exp(delV1./(g0.*ISP1))); %Stage 1
-
-m_prop2_2 = (SRSm.*(exp(delV2./(g0.*ISP2)) - 1).*(1-Fin2))./(1-Fin2.*exp(delV2./(g0.*ISP2))); %Stage 2
-m_inert2_2 = (SRSm.*Fin2.*(exp(delV2./(g0.*ISP2))-1))./(1-Fin2.*exp(delV2./(g0.*ISP2))); %Stage 2
+m_prop2_2 = (SRSm.*(exp(delV2(ind)./(g0.*ISP2)) - 1).*(1-Fin2))./(1-Fin2.*exp(delV2(ind)./(g0.*ISP2))); %Stage 2
+m_inert2_2 = (SRSm.*Fin2.*(exp(delV2(ind)./(g0.*ISP2))-1))./(1-Fin2.*exp(delV2(ind)./(g0.*ISP2))); %Stage 2
 
 m2_prop_tot = m_prop2_2 + m_prop2_0;
 m2_inert_tot = m_inert2_2 + m_inert2_0;
 
 %---Cost---
 c_2 = m2_inert_tot.*1000 + m2_prop_tot.*30; %Cost of 2 stage [kg]*[$/kg] = [$]
-c_1 = m1_inert_tot.*1000 + m1_prop_tot.*30; %Cost of 1 stage
+%c_1 = m1_inert_tot.*1000 + m1_prop_tot.*30; %Cost of 1 stage
 
 
