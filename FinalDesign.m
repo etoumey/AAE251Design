@@ -3,7 +3,7 @@
 %                                                                         %
 %                             Group 6                                     %
 %                                                                         %
-% Inputs:                                                                  %
+% Inputs:                                                                 %
 %  1.  m_pay - payload mass [kg]                                          %
 %  2.  delV1 - delta V that the first stage needs to achieve [m/s]        %
 %  3.  delV2 - delta V that the second stage needs to achieve [m/s]       %
