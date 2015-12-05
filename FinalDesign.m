@@ -46,7 +46,7 @@ ISP3 = 316; %[s]
 Fin1 = 0.091; %0.08;
 Fin2 = 0.097; %0.13;
 Fin3 = .1;  %Estimate
-B = 90;  %[degrees] N launch azimuth
+B = 60;  %[degrees] N launch azimuth
 Lat = 28.4556;  %[degrees] N launch latitude 
 Long = 80.5278;  %[degrees] W launch longitude
 LatRad = Lat*2*pi/360;
@@ -65,7 +65,7 @@ a = .5*(raTrans+rpTrans);
 SRSdeltaV1 = sqrt(2*((u_earth/ro)-(u_earth/(2*a)))) - vo;
 SRSdeltaV2 = sqrt(u_earth/raTrans) - sqrt(2*((u_earth/raTrans)-(u_earth/(2*a))));
 SRSdeltaV3 = 2*(sqrt(2*((u_earth/raTrans)-(u_earth/(2*a)))))*sind(delta_i/2);
-SRSm_prop = (SRSm_pay*exp((SRSdeltaV1+SRSdeltaV3)/(.0098*316))*(1-Fin3))/(1-(Fin3*exp((SRSdeltaV1+SRSdeltaV3)/(.0098*ISP3)))) + (((SRSm_pay+SRSm_sat)*exp(SRSdeltaV2/(.0098*ISP3))*(1-Fin3))/(1-(Fin3*exp(SRSdeltaV2/(.0098*ISP3)))));
+SRSm_prop = (SRSm_pay*exp((SRSdeltaV1+SRSdeltaV2)/(.0098*316))*(1-Fin3))/(1-(Fin3*exp((SRSdeltaV1+SRSdeltaV2)/(.0098*ISP3)))) + (((SRSm_pay+SRSm_sat)*exp(SRSdeltaV3/(.0098*ISP3))*(1-Fin3))/(1-(Fin3*exp(SRSdeltaV3/(.0098*ISP3)))));
 SRSm = (SRSm_prop+SRSm_pay)*(1+Fin3);
 
 %--Launch Stage Split--
