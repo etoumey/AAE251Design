@@ -7,6 +7,7 @@ close all
 %--Constants---
 u_earth = 3.986E14; %[m^3/s^2]
 r_earth = 6378*1000; %[m]
+w_e = 2*pi/(24*60*60); %[rad/s]
 g0 = 9.81; % [m/s^2]
 delV_grav = 1500;  % [m/s]
 delV_drag = 150; % [m/s]
@@ -24,9 +25,14 @@ Fin2 = 0.097; %0.13;
 %---Inputs---
 m_pay = 15000; % [kg] payload mass
 alt = 200*1000; % [m] circular orbit altitude
+latitude = 28.5233 .*(pi/180); %[rad] location of cape canaveral
+inc = 45 .*(pi/180); %[rad] desired inclination
+azimuth = asin(cos(inc)./cos(latitude)); %[rad] 
 
 %---Calculations---
-delv_tot = sqrt(u_earth/(r_earth+alt))  + delV_grav + delV_drag + delV_steer % [m/s] Delta V required for circular flight at this altitude
+delv_initial = w_e .* r_earth .* cos(latitude) .* sin(azimuth); %free DeltaV from earths rotation
+delv_ideal = sqrt(u_earth/(r_earth+alt)) - delv_initial; %Ideal DeltaV for orbit with free DeltaV from earth
+delv_tot =  delv_ideal + delV_grav + delV_drag + delV_steer; % [m/s] Delta V required for circular flight at this altitude
 
 %---Inert---
 %m_inert = m_0 - m_prop - m_pay;
