@@ -31,22 +31,37 @@ clear all
 Lat = 28.4556;  %[degrees] N launch latitude 
 SRSmPay = 500;  %[kg] SRS payload: capture arm
 B = linspace(35,120,1000);
-iEff = linspace(0,90,1000);
-for q = 1:length(iEff)
-    for j = 1:length(B)
-        inclination(q,j) = acosd(sind(B(j))*cosd(Lat));
-        [SRSmProp, SRSmInert] = SRSf(abs(iEff(q)-inclination(q,j)));
-        SRSmTot = (SRSmProp+SRSmInert+SRSmPay);
-        [launchCost(q,j), inc, delV1_optPercent] = Rocketf(B(j), SRSmTot);
-        SRScost(q,j) = CostCalc(SRSmInert, SRSmProp);
-        totalCost(q,j) = SRScost(q,j) + launchCost(q,j);
+iEff = linspace(0,90,100);
+
+for j = 1:length(B)
+    inclination(j) = acosd(sind(B(j))*cosd(Lat));
+    [SRSmProp, SRSmInert] = SRSf(abs(90-inclination(j)));
+    SRSmTot(j) = (SRSmProp+SRSmInert+SRSmPay);
+    [launchCost(j), inc, delV1_optPercent(j)] = Rocketf(B(j), SRSmTot(j));
+    SRScost(j) = CostCalc(SRSmInert, SRSmProp);
+    totalCost(j) = SRScost(j) + launchCost(j);
     end
-    fprintf('%.f\n', q)
-end
+    fprintf('%.f\n', j)
+
 figure;
-%subplot(2,2,1)
-surf(iEff, B, totalCost)
-zlim([0 4E7]);
+
+%surf(iEff, B, totalCost)
+%zlim([0 4E7]);
+
+subplot(2,2,1)
+plot(B, inclination)
+title('Resultant Inclination Based on Azimuth');
+subplot(2,2,2)
+plot(B, totalCost)
+title('Total Cost on Azimuth')
+subplot(2,2,3)
+plot(B, launchCost, B, SRScost,B,totalCost)
+ylim([0 8E7])
+legend('Launch', 'SRS')
+title('Cost of Launch and SRS')
+subplot(2,2,4)
+plot(B, delV1_optPercent)
+title('Stage Split')
 %subplot(2,2,2)
 %contour
 
