@@ -30,15 +30,16 @@ clear all
 %--Constants---
 Lat = 28.4556;  %[degrees] N launch latitude 
 SRSmPay = 500;  %[kg] SRS payload: capture arm
-B = linspace(35,120,1000);
+B = linspace(35,45,1000);
 iEff = linspace(0,90,100);
 
 for j = 1:length(B)
     inclination(j) = acosd(sind(B(j))*cosd(Lat));
     [SRSmProp, SRSmInert] = SRSf(abs(90-inclination(j)));
     SRSmTot(j) = (SRSmProp+SRSmInert+SRSmPay);
-    [launchCost(j), inc, delV1_optPercent(j)] = Rocketf(B(j), SRSmTot(j));
+    [inc, delV1_optPercent(j), m_inert_0(j), m_prop_0(j), m_inert_2(j), m_prop_2(j) ] = Rocketf(B(j), SRSmTot(j));
     SRScost(j) = CostCalc(SRSmInert, SRSmProp);
+    launchCost(j) = CostCalc(m_inert_0(j)+m_inert_2(j), m_prop_0(j)+m_prop_2(j));
     totalCost(j) = SRScost(j) + launchCost(j);
     end
     fprintf('%.f\n', j)

@@ -1,4 +1,4 @@
-function [ cost, inc, delV1_optPercent ] = Rocketf( azimuth, m_pay )
+function [inc, delV1_optPercent, m_inert_0, m_prop_0, m_inert_2, m_prop_2 ] = Rocketf( azimuth, m_pay )
 %UNTITLED3 Summary of this function goes here
 %   Detailed explanation goes here
 %
@@ -36,7 +36,7 @@ inc = acos(sin(azimuth)*cos(latitude));
 %---Calculations---
 delv_initial = w_e .* r_earth .* cos(latitude) .* sin(azimuth); %free DeltaV from earths rotation
 delv_ideal = sqrt(u_earth/(r_earth+alt)) - delv_initial; %Ideal DeltaV for orbit with free DeltaV from earth
-delv_tot =  delv_ideal + delV_grav + delV_drag + delV_steer; % [m/s] Delta V required for circular flight at this altitude
+delv_tot =  delv_ideal + delV_grav + delV_drag + delV_steer % [m/s] Delta V required for circular flight at this altitude
 
 %---Inert---
 %m_inert = m_0 - m_prop - m_pay;
@@ -53,10 +53,6 @@ ratio = linspace(0.1,0.6,1000);
 delV1 = delv_tot.*ratio;
 delV2 = delv_tot - delV1;
 
-%---Single Stage---
-m1_0 = (m_pay.*(exp(delv_tot./(g0.*ISP))).*(1-f_inert))./(1-f_inert.*exp(delv_tot./(g0.*ISP)));
-m1_prop_tot = (m_pay.*(exp(delv_tot./(g0.*ISP)) - 1).*(1-f_inert))./(1-f_inert.*exp(delv_tot./(g0.*ISP)));
-m1_inert_tot = (m_pay.*f_inert.*(exp(delv_tot./(g0.*ISP))-1))./(1-f_inert.*exp(delv_tot./(g0.*ISP)));
 
 %---Two Stage---
 m0_2 = (m_pay.*(exp(delV2./(g0.*ISP2))).*(1-Fin2))./(1-Fin2.*exp(delV2./(g0.*ISP2)));
@@ -75,12 +71,16 @@ m2_inert_tot = m_inert2_2 + m_inert2_0;
 [m0_min, ind] = min(m0);
 delV1_optPercent = ratio(ind)*100;
 delV1_opt = delV1(ind);
-
 %---Cost---
-c_2 = m2_inert_tot.*1000 + m2_prop_tot.*30; %Cost of 2 stage [kg]*[$/kg] = [$]
-c_1 = m1_inert_tot.*1000 + m1_prop_tot.*30; %Cost of 1 stage
+m_inert_0 = m_inert2_0(ind);
+m_prop_0 = m_prop2_0(ind);
+%Cost of 2 stage [kg]*[$/kg] = [$]
+m_inert_2 = m_inert2_2(ind);
+m_prop_2 = m_prop2_2(ind); %Cost of 1 stage
 
-cost = c_2(ind);
+
+
+%cost = c_1+c_2;
 inc = inc*180/pi;
 
 

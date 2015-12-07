@@ -1,10 +1,10 @@
-function [ inc ] = Rocketf( azimuth )
+function [ cost, inc, delV1_optPercent ] = Rocketf( azimuth, m_pay )
 %UNTITLED3 Summary of this function goes here
 %   Detailed explanation goes here
 %
 
 
-close all
+
 
 %--Constants---
 u_earth = 3.986E14; %[m^3/s^2]
@@ -25,9 +25,10 @@ Fin1 = 0.091; %0.08;
 Fin2 = 0.097; %0.13;
 
 %---Inputs---
-m_pay = 15000; % [kg] payload mass
+%m_pay = 15000; % [kg] payload mass
 alt = 200*1000; % [m] circular orbit altitude
 latitude = 28.5233 .*(pi/180); %[rad] location of cape canaveral
+azimuth = azimuth*(pi/180); %[rad] conversion
 inc = acos(sin(azimuth)*cos(latitude));
 %inc = 45 .*(pi/180); %[rad] desired inclination
 %azimuth = asin(cos(inc)./cos(latitude)); %[rad] 
@@ -52,10 +53,6 @@ ratio = linspace(0.1,0.6,1000);
 delV1 = delv_tot.*ratio;
 delV2 = delv_tot - delV1;
 
-%---Single Stage---
-m1_0 = (m_pay.*(exp(delv_tot./(g0.*ISP))).*(1-f_inert))./(1-f_inert.*exp(delv_tot./(g0.*ISP)));
-m1_prop_tot = (m_pay.*(exp(delv_tot./(g0.*ISP)) - 1).*(1-f_inert))./(1-f_inert.*exp(delv_tot./(g0.*ISP)));
-m1_inert_tot = (m_pay.*f_inert.*(exp(delv_tot./(g0.*ISP))-1))./(1-f_inert.*exp(delv_tot./(g0.*ISP)));
 
 %---Two Stage---
 m0_2 = (m_pay.*(exp(delV2./(g0.*ISP2))).*(1-Fin2))./(1-Fin2.*exp(delV2./(g0.*ISP2)));
@@ -71,16 +68,17 @@ m2_prop_tot = m_prop2_2 + m_prop2_0;
 m2_inert_tot = m_inert2_2 + m_inert2_0;
 
 %---Optimize Delta V split---
-[m0_min, ind] = min(m0)
+[m0_min, ind] = min(m0);
 delV1_optPercent = ratio(ind)*100;
-delV1_opt = delV1(ind)
-
+delV1_opt = delV1(ind);
 %---Cost---
-c_2 = m2_inert_tot.*1000 + m2_prop_tot.*30; %Cost of 2 stage [kg]*[$/kg] = [$]
-c_1 = m1_inert_tot.*1000 + m1_prop_tot.*30; %Cost of 1 stage
+c_2 = m_inert2_0(ind).*1000 + m_prop2_0(ind).*20; %Cost of 2 stage [kg]*[$/kg] = [$]
+c_1 = m_inert2_2(ind).*1000 + m_prop2_2(ind).*20; %Cost of 1 stage
 
 
 
+cost = c_1+c_2;
+inc = inc*180/pi;
 
 
 end
