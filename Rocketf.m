@@ -36,7 +36,7 @@ inc = acos(sin(azimuth)*cos(latitude));
 %---Calculations---
 delv_initial = w_e .* r_earth .* cos(latitude) .* sin(azimuth); %free DeltaV from earths rotation
 delv_ideal = sqrt(u_earth/(r_earth+alt)) - delv_initial; %Ideal DeltaV for orbit with free DeltaV from earth
-delv_tot =  delv_ideal + delV_grav + delV_drag + delV_steer % [m/s] Delta V required for circular flight at this altitude
+delv_tot =  delv_ideal + delV_grav + delV_drag + delV_steer; % [m/s] Delta V required for circular flight at this altitude
 
 %---Inert---
 %m_inert = m_0 - m_prop - m_pay;
@@ -78,10 +78,18 @@ m_prop_0 = m_prop2_0(ind);
 m_inert_2 = m_inert2_2(ind);
 m_prop_2 = m_prop2_2(ind); %Cost of 1 stage
 
-
-
-%cost = c_1+c_2;
 inc = inc*180/pi;
+
+if m_inert_0 < 0 || m_prop_0 < 0 || m_inert_2 < 0 || m_prop_2 < 0
+    m_inert_0 = NaN;
+    m_prop_0 = NaN;
+    m_inert_2 = NaN;
+    m_prop_2 = NaN;
+    inc = NaN;
+    delV1_optPercent = NaN;
+end
+
+
 
 
 end

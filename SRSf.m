@@ -26,9 +26,9 @@ deltaV3 = 2*(sqrt(2*((u_earth/raTrans)-(u_earth/(2*a)))))*sind(inclinationChange
 mProp = (mPay*exp((deltaV1+deltaV3)/(.0098*316))*(1-Fin3))/(1-(Fin3*exp((deltaV1+deltaV3)/(.0098*ISP3)))) + (((mPay+mSat)*exp(deltaV2/(.0098*ISP3))*(1-Fin3))/(1-(Fin3*exp(deltaV2/(.0098*ISP3)))));
 mInert = (mPay*Fin3*exp((deltaV1+deltaV3)/(.0098*316)))/(1-(Fin3*exp((deltaV1+deltaV3)/(.0098*ISP3)))) + (((mPay+mSat)*Fin3*exp(deltaV2/(.0098*ISP3)))/(1-(Fin3*exp(deltaV2/(.0098*ISP3)))));
 
-if mProp < 0 
-    mProp = 0;
-    mInert = 0;
+if mProp < 0 || mInert < 0
+    mProp = NaN;
+    mInert = NaN;
 end
 
 end

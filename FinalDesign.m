@@ -30,18 +30,29 @@ clear all
 %--Constants---
 Lat = 28.4556;  %[degrees] N launch latitude 
 SRSmPay = 500;  %[kg] SRS payload: capture arm
-B = linspace(35,45,1000);
-iEff = linspace(0,90,100);
-
-for j = 1:length(B)
-    inclination(j) = acosd(sind(B(j))*cosd(Lat));
-    [SRSmProp, SRSmInert] = SRSf(abs(90-inclination(j)));
-    SRSmTot(j) = (SRSmProp+SRSmInert+SRSmPay);
-    [inc, delV1_optPercent(j), m_inert_0(j), m_prop_0(j), m_inert_2(j), m_prop_2(j) ] = Rocketf(B(j), SRSmTot(j));
-    SRScost(j) = CostCalc(SRSmInert, SRSmProp);
-    launchCost(j) = CostCalc(m_inert_0(j)+m_inert_2(j), m_prop_0(j)+m_prop_2(j));
-    totalCost(j) = SRScost(j) + launchCost(j);
+B = linspace(35,120,1000);
+iEff = linspace(0,90,1000);
+inclination = acosd(sind(B).*cosd(Lat));
+for q = 1:length(iEff)
+    for j = 1:length(B)
+        
+        [SRSmProp, SRSmInert] = SRSf(abs(iEff(q)-inclination(j)));
+        SRSmTot(j,q) = (SRSmProp+SRSmInert+SRSmPay);
+        [inc, delV1_optPercent(j,q), m_inert_0(j,q), m_prop_0(j,q), m_inert_2(j,q), m_prop_2(j,q) ] = Rocketf(B(j), SRSmTot(j,q));
+        SRScost(j,q) = CostCalc(SRSmInert, SRSmProp);
+        launchCost(j,q) = CostCalc(m_inert_0(j,q)+m_inert_2(j,q), m_prop_0(j,q)+m_prop_2(j,q));
+        if SRScost(j,q) > 3E7 || launchCost(j,q) > 3E7
+            SRScost(j,q) = NaN;
+            launchCost(j,q) = NaN;
+        end
+        totalCost(j,q) = SRScost(j,q) + launchCost(j,q);
+    end
 end
+
+[idealCost idealInd] = min(transpose(totalCost));
+idealAzimuth = B(idealInd); 
+%idealInclination = 
+
 
 
 figure;
@@ -64,4 +75,21 @@ subplot(2,2,4)
 plot(B, delV1_optPercent)
 title('Stage Split')
 %subplot(2,2,2)
-%contour
+figure;
+surfc(B, iEff, totalCost);%, 'FaceAlpha', 1, 'LineStyle', :)
+ylabel('Inclination of Satellite');
+xlabel('Launch Azimuth')
+zlabel('Total Cost')
+figure;
+contour(B, iEff, totalCost,20)
+hold on
+plot(idealAzimuth, iEff)
+ylabel('Inclination of Satellite');
+xlabel('Launch Azimuth')
+zlabel('Total Cost')
+hold off
+figure;
+mesh(B, iEff, totalCost)
+ylabel('Inclination of Satellite');
+xlabel('Launch Azimuth')
+zlabel('Total Cost')
