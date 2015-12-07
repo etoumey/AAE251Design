@@ -41,8 +41,8 @@ for j = 1:length(B)
     SRScost(j) = CostCalc(SRSmInert, SRSmProp);
     launchCost(j) = CostCalc(m_inert_0(j)+m_inert_2(j), m_prop_0(j)+m_prop_2(j));
     totalCost(j) = SRScost(j) + launchCost(j);
-    end
-    fprintf('%.f\n', j)
+end
+
 
 figure;
 
@@ -65,4 +65,3 @@ plot(B, delV1_optPercent)
 title('Stage Split')
 %subplot(2,2,2)
 %contour
-
