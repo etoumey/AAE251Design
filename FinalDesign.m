@@ -24,18 +24,21 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 clc
-
+close all
 clear all
 
 %--Constants---
 Lat = 28.4556;  %[degrees] N launch latitude 
 SRSmPay = 500;  %[kg] SRS payload: capture arm
-B = linspace(35,120,1000);
-iEff = linspace(0,90,1000);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%       CHANGE LAST ARGUMENT OF LINSPACE TO ALTER RESOLUTION              %
+B = linspace(35,120,1000);                                                %
+iEff = linspace(0,90,1000);                                               %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 inclination = acosd(sind(B).*cosd(Lat));
 for q = 1:length(iEff)
     for j = 1:length(B)
-        
         [SRSmProp, SRSmInert] = SRSf(abs(iEff(q)-inclination(j)));
         SRSmTot(j,q) = (SRSmProp+SRSmInert+SRSmPay);
         [inc, delV1_optPercent(j,q), m_inert_0(j,q), m_prop_0(j,q), m_inert_2(j,q), m_prop_2(j,q) ] = Rocketf(B(j), SRSmTot(j,q));
@@ -55,41 +58,37 @@ idealAzimuth = B(idealInd);
 
 
 
-figure;
 
 %surf(iEff, B, totalCost)
 %zlim([0 4E7]);
 
-subplot(2,2,1)
-plot(B, inclination)
-title('Resultant Inclination Based on Azimuth');
-subplot(2,2,2)
-plot(B, totalCost)
-title('Total Cost on Azimuth')
-subplot(2,2,3)
-plot(B, launchCost, B, SRScost,B,totalCost)
-ylim([0 8E7])
-legend('Launch', 'SRS')
-title('Cost of Launch and SRS')
-subplot(2,2,4)
-plot(B, delV1_optPercent)
-title('Stage Split')
-%subplot(2,2,2)
+figure;
+plot(iEff, idealAzimuth)
+title('Ideal Azimuth for Inclination of Capture');
+xlabel('Inclination of Capture')
+ylabel('Launch Azimuth')
+figure;
+plot(iEff, idealCost)
+title('Ideal Total Cost for Inclination of Capture')
+xlabel('Inclination of Capture')
+ylabel('Ideal Total Cost;')
+
+
 figure;
 surfc(B, iEff, totalCost);%, 'FaceAlpha', 1, 'LineStyle', :)
+%hold on
+%scatter3(idealAzimuth, iEff, idealCost,'r', 'Filled')
+legend('Total Cost of Launch and Capture', 'Lowest Cost Profile', 'Location', 'southoutside')
 ylabel('Inclination of Satellite');
 xlabel('Launch Azimuth')
 zlabel('Total Cost')
 figure;
 contour(B, iEff, totalCost,20)
 hold on
-plot(idealAzimuth, iEff)
+plot(idealAzimuth, iEff, 'r', 'LineWidth', 4)
+legend('Total Cost of Launch and Capture', 'Lowest Cost Profile', 'Location', 'southoutside')
 ylabel('Inclination of Satellite');
 xlabel('Launch Azimuth')
 zlabel('Total Cost')
 hold off
-figure;
-mesh(B, iEff, totalCost)
-ylabel('Inclination of Satellite');
-xlabel('Launch Azimuth')
-zlabel('Total Cost')
+
