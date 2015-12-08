@@ -33,10 +33,11 @@ SRSmPay = 500;  %[kg] SRS payload: capture arm
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %       CHANGE LAST ARGUMENT OF LINSPACE TO ALTER RESOLUTION              %
-B = linspace(35,120,1000);                                               %
-iEff = linspace(0,90,1000);                                              %
+B = linspace(35,120,100);                                               %
+iEff = linspace(0,90,100);                                              %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 inclination = acosd(sind(B).*cosd(Lat));
+
 for q = 1:length(iEff)
     for j = 1:length(B)
         [SRSmProp, SRSmInert] = SRSf(abs(iEff(q)-inclination(j)));
@@ -52,7 +53,7 @@ for q = 1:length(iEff)
     end
 end
 
-[idealCost idealInd] = min(transpose(totalCost));
+[idealCost, idealInd] = min(transpose(totalCost));
 idealAzimuth = B(idealInd); 
 for ii = 1:length(idealAzimuth)
     [idealSRSmProp(ii), idealSRSmInert(ii)] = SRSf(abs(acosd(sind(idealAzimuth(ii)).*cosd(Lat))-iEff));
@@ -79,7 +80,7 @@ ylabel('Ideal Total Cost')
 
 
 figure(2)
-surfc(B, iEff, totalCost, 'FaceAlpha', 1, 'LineStyle', 'none')
+surfc(B, iEff, totalCost,  'LineStyle', 'none')
 %hold on
 %scatter3(idealAzimuth, iEff, idealCost,'r', 'Filled')
 legend('Total Cost of Launch and Capture', 'Lowest Cost Profile', 'Location', 'southoutside')
