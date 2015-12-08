@@ -33,8 +33,8 @@ SRSmPay = 500;  %[kg] SRS payload: capture arm
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %       CHANGE LAST ARGUMENT OF LINSPACE TO ALTER RESOLUTION              %
-B = linspace(35,120,1000);                                                %
-iEff = linspace(0,90,1000);                                               %
+B = linspace(35,120,1000);                                               %
+iEff = linspace(0,90,1000);                                              %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 inclination = acosd(sind(B).*cosd(Lat));
 for q = 1:length(iEff)
@@ -54,15 +54,19 @@ end
 
 [idealCost idealInd] = min(transpose(totalCost));
 idealAzimuth = B(idealInd); 
-%idealInclination = 
+for ii = 1:length(idealAzimuth)
+    [idealSRSmProp(ii), idealSRSmInert(ii)] = SRSf(abs(acosd(sind(idealAzimuth(ii)).*cosd(Lat))-iEff));
+end
 
-
+[SRSmProp_final, idealInd] = max(idealSRSmProp);
+SRSmInert_final = idealSRSmInert(idealInd);
+[inc, idealdelV1_optPercent, idealm_inert_0, idealm_prop_0, idealm_inert_2, idealm_prop_2] = Rocketf(idealAzimuth(idealInd), SRSmInert_final+SRSmProp_final+SRSmPay);
 
 
 %surf(iEff, B, totalCost)
 %zlim([0 4E7]);
 
-figure;
+figure(1)
 plot(iEff, idealAzimuth)
 title('Ideal Azimuth for Inclination of Capture');
 xlabel('Inclination of Capture')
@@ -71,18 +75,18 @@ figure;
 plot(iEff, idealCost)
 title('Ideal Total Cost for Inclination of Capture')
 xlabel('Inclination of Capture')
-ylabel('Ideal Total Cost;')
+ylabel('Ideal Total Cost')
 
 
-figure;
-surfc(B, iEff, totalCost);%, 'FaceAlpha', 1, 'LineStyle', :)
+figure(2)
+surfc(B, iEff, totalCost, 'FaceAlpha', 1, 'LineStyle', 'none')
 %hold on
 %scatter3(idealAzimuth, iEff, idealCost,'r', 'Filled')
 legend('Total Cost of Launch and Capture', 'Lowest Cost Profile', 'Location', 'southoutside')
 ylabel('Inclination of Satellite');
 xlabel('Launch Azimuth')
 zlabel('Total Cost')
-figure;
+figure(3)
 contour(B, iEff, totalCost,20)
 hold on
 plot(idealAzimuth, iEff, 'r', 'LineWidth', 4)
@@ -92,3 +96,5 @@ xlabel('Launch Azimuth')
 zlabel('Total Cost')
 hold off
 
+figure(4)
+plot(iEff, idealCost)

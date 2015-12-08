@@ -23,9 +23,20 @@ deltaV1 = sqrt(2*((u_earth/ro)-(u_earth/(2*a)))) - vo;
 deltaV2 = sqrt(u_earth/raTrans) - sqrt(2*((u_earth/raTrans)-(u_earth/(2*a))));
 deltaV3 = 2*(sqrt(2*((u_earth/raTrans)-(u_earth/(2*a)))))*sind(inclinationChange/2);
 
-mProp = (mPay*exp((deltaV1+deltaV3)/(.0098*316))*(1-Fin3))/(1-(Fin3*exp((deltaV1+deltaV3)/(.0098*ISP3)))) + (((mPay+mSat)*exp(deltaV2/(.0098*ISP3))*(1-Fin3))/(1-(Fin3*exp(deltaV2/(.0098*ISP3)))));
-mInert = (mPay*Fin3*exp((deltaV1+deltaV3)/(.0098*316)))/(1-(Fin3*exp((deltaV1+deltaV3)/(.0098*ISP3)))) + (((mPay+mSat)*Fin3*exp(deltaV2/(.0098*ISP3)))/(1-(Fin3*exp(deltaV2/(.0098*ISP3)))));
 
+mProp = (mPay*exp((deltaV1+deltaV2 + deltaV3)/(.0098*316))*(1-Fin3))/(1-(Fin3*exp((deltaV1+deltaV2+ deltaV3)/(.0098*ISP3)))); % 
+mInert = (mPay*Fin3*exp((deltaV1+deltaV2+deltaV3)/(.0098*316)))/(1-(Fin3*exp((deltaV1+deltaV2+deltaV3)/(.0098*ISP3)))); %+ 
+
+ro = 1000+re;
+ra = 1000+re;
+rp = re;
+vo = sqrt(u_earth/ro);
+
+a = .5*(ra+rp);
+
+deltaV4 = abs(sqrt(2*((u_earth/ro)-(u_earth/(2*a)))) - vo);
+mProp = mProp + (((mPay+mSat)*exp(deltaV2/(.0098*ISP3))*(1-Fin3))/(1-(Fin3*exp(deltaV2/(.0098*ISP3)))));
+mInert = mInert + (((mPay+mSat)*Fin3*exp(deltaV2/(.0098*ISP3)))/(1-(Fin3*exp(deltaV2/(.0098*ISP3)))));
 if mProp < 0 || mInert < 0
     mProp = NaN;
     mInert = NaN;
