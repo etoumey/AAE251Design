@@ -33,17 +33,17 @@ SRSmPay = 500;  %[kg] SRS payload: capture arm
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %       CHANGE LAST ARGUMENT OF LINSPACE TO ALTER RESOLUTION              %
-B = linspace(35,120,1000);                                               %
-iEff = linspace(0,90,1000);                                              %
+B = linspace(35,120,100);                                               %
+iEff = linspace(0,90,100);                                              %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 inclination = acosd(sind(B).*cosd(Lat));
 
 for q = 1:length(iEff)
     for j = 1:length(B)
-        [SRSmProp, SRSmInert] = SRSf(abs(iEff(q)-inclination(j)));
-        SRSmTot(j,q) = (SRSmProp+SRSmInert+SRSmPay);
+        [SRSmProp(j,q), SRSmInert] = SRSf(abs(iEff(q)-inclination(j)));
+        SRSmTot(j,q) = (SRSmProp(j,q)+SRSmInert+SRSmPay);
         [inc, delV1_optPercent(j,q), m_inert_0(j,q), m_prop_0(j,q), m_inert_2(j,q), m_prop_2(j,q) ] = Rocketf(B(j), SRSmTot(j,q));
-        SRScost(j,q) = CostCalc(SRSmInert, SRSmProp);
+        SRScost(j,q) = CostCalc(SRSmInert, SRSmProp(j,q));
         launchCost(j,q) = CostCalc(m_inert_0(j,q)+m_inert_2(j,q), m_prop_0(j,q)+m_prop_2(j,q));
         if SRScost(j,q) > 3E7 || launchCost(j,q) > 3E7
             SRScost(j,q) = NaN;
@@ -55,13 +55,13 @@ end
 
 [idealCost, idealInd] = min(transpose(totalCost));
 idealAzimuth = B(idealInd); 
-for ii = 1:length(idealAzimuth)
-    [idealSRSmProp(ii), idealSRSmInert(ii)] = SRSf(abs(acosd(sind(idealAzimuth(ii)).*cosd(Lat))-iEff));
-end
+%for ii = 1:length(idealAzimuth)
+%    [idealSRSmProp(ii), idealSRSmInert(ii)] = SRSf(abs(acosd(sind(idealAzimuth(ii)).*cosd(Lat))-iEff));
+%end
 
-[SRSmProp_final, idealInd] = max(idealSRSmProp);
-SRSmInert_final = idealSRSmInert(idealInd);
-[inc, idealdelV1_optPercent, idealm_inert_0, idealm_prop_0, idealm_inert_2, idealm_prop_2] = Rocketf(idealAzimuth(idealInd), SRSmInert_final+SRSmProp_final+SRSmPay);
+%[SRSmProp_final, idealInd] = max(idealSRSmProp);
+%SRSmInert_final = idealSRSmInert(idealInd);
+%[inc, idealdelV1_optPercent, idealm_inert_0, idealm_prop_0, idealm_inert_2, idealm_prop_2] = Rocketf(idealAzimuth(idealInd), SRSmInert_final+SRSmProp_final+SRSmPay);
 
 
 %surf(iEff, B, totalCost)
