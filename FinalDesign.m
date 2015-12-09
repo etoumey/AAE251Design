@@ -33,8 +33,8 @@ SRSmPay = 500;  %[kg] SRS payload: capture arm
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %       CHANGE LAST ARGUMENT OF LINSPACE TO ALTER RESOLUTION              %
-B = linspace(35,120,100);                                               %
-iEff = linspace(0,90,100);                                              %
+B = linspace(35,120,1000);                                               %
+iEff = linspace(0,90,1000);                                              %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 inclination = acosd(sind(B).*cosd(Lat));
 
