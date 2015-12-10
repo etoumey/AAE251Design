@@ -1,4 +1,4 @@
-function [m_inert_0, m_prop_0, m_inert_2, m_prop_2 ] = Rocketf( azimuth, m_pay )
+function [delV1_optPercent, m_inert_0, m_prop_0, m_inert_2, m_prop_2 ] = Rocketf( azimuth, m_pay )
 %UNTITLED3 Summary of this function goes here
 %   Detailed explanation goes here
 %
@@ -19,7 +19,7 @@ delV_steer = 200; % [m/s]
 f_inert = 26400/228400;
 ISP = 414; %[s]  + LOX
 %Two Stage
-ISP1 = 311; %[s] Kerosine + LOX
+ISP1 = 400; %[s] Kerosine + LOX
 ISP2 = 451; %[s] H + LOX
 Fin1 = 0.091; %0.08;
 Fin2 = 0.097; %
@@ -49,7 +49,7 @@ delv_tot =  delv_ideal + delV_grav + delV_drag + delV_steer; % [m/s] Delta V req
 
 %% ---Comparing 1 and 2 stage rocket with delV range---
 %delv_tot = 5:0.01:10; % [km/s]
-ratio = .28;%linspace(0.1,0.6,1000);
+ratio = linspace(0.1,0.6,1000);
 delV1 = delv_tot.*ratio;
 delV2 = delv_tot - delV1;
 
@@ -78,14 +78,14 @@ m_prop_0 = 1.05*m_prop2_0(ind);
 m_inert_2 = m_inert2_2(ind);
 m_prop_2 = 1.05*m_prop2_2(ind); %Cost of 1 stage
 
-% if m_inert_0 < 0 || m_prop_0 < 0 || m_inert_2 < 0 || m_prop_2 < 0 || delV1_optPercent == 10
-%     m_inert_0 = NaN;
-%     m_prop_0 = NaN;
-%     m_inert_2 = NaN;
-%     m_prop_2 = NaN;
-%     inc = NaN;
-%     delV1_optPercent = NaN;
-% end
+if m_inert_0 < 0 || m_prop_0 < 0 || m_inert_2 < 0 || m_prop_2 < 0 || delV1_optPercent == 10
+     m_inert_0 = NaN;
+     m_prop_0 = NaN;
+     m_inert_2 = NaN;
+     m_prop_2 = NaN;
+     inc = NaN;
+     delV1_optPercent = NaN;
+end
 
 
 

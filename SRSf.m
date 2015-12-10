@@ -3,7 +3,7 @@ function [ mProp, mInert ] = SRSf( inclinationChange )
 %   Detailed explanation goes here
 %%%%%%%%%%%%%%%%%% Constants %%%%%%%%%%%%%%%%%%%%%%
 
-mPay = 1000;  %kg of SRS
+mPay = 1500;  %kg of SRS
 re = 6378;  %km radius of Earth
 u_earth = 3.986E5;  %km^3/s^2
 ISP3 = 316;  %Isp of OMS system on Shuttle
