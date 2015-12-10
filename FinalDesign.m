@@ -29,7 +29,7 @@ clear all
 
 %--Constants---
 Lat = 13.5761;  %[degrees] N launch latitude 
-SRSmPay = 500;  %[kg] SRS payload: capture arm
+SRSmPay = 1000;  %[kg] SRS payload: capture arm
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %       CHANGE LAST ARGUMENT OF LINSPACE TO ALTER RESOLUTION              %
@@ -37,22 +37,25 @@ B = linspace(90,270,1000);                                               %
 iEff = linspace(0,180,1000);                                              %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 inclination = acosd(sind(B).*cosd(Lat));
-SRSmTot_final = 2.1881e+03;
+SRSmTot_final = 3.9184e+03;
+SRSmInert_final = 335.4539;
+SRSmProp_final = 2.5830e+03;
+SRScost_final = CostCalc(SRSmInert_final, SRSmProp_final);
 for q = 1:length(iEff)
     q
     for j = 1:length(B)
-        inclinationChange(j,q) = abs((iEff(q)-inclination(j)));
-        [SRSmProp(j,q), SRSmInert] = SRSf(inclinationChange(j,q));
-        SRSmTot(j,q) = (SRSmProp(j,q)+SRSmInert+SRSmPay);
+%         inclinationChange(j,q) = abs((iEff(q)-inclination(j)));
+%         [SRSmProp(j,q), SRSmInert] = SRSf(inclinationChange(j,q));
+%         SRSmTot(j,q) = (SRSmProp(j,q)+SRSmInert+SRSmPay);
         [m_inert_0(j,q), m_prop_0(j,q), m_inert_2(j,q), m_prop_2(j,q) ] = Rocketf(B(j), SRSmTot_final);%(j,q));
         launchmTot(j,q) = m_inert_0(j,q)+ m_prop_0(j,q)+ m_inert_2(j,q)+ m_prop_2(j,q);
-        SRScost(j,q) = CostCalc(SRSmInert, SRSmProp(j,q));
+%        SRScost(j,q) = CostCalc(SRSmInert, SRSmProp(j,q));
         launchCost(j,q) = CostCalc((m_inert_0(j,q)+m_inert_2(j,q)), (m_prop_0(j,q)+m_prop_2(j,q)));
-        if SRScost(j,q) > 3E7 || launchCost(j,q) > 3E7
-            SRScost(j,q) = NaN;
+        if launchCost(j,q) > 3E7 %|| SRScost(j,q) > 3E7 
+%            SRScost(j,q) = NaN;
             launchCost(j,q) = NaN;
         end
-        totalCost(j,q) = SRScost(j,q) + launchCost(j,q);
+        totalCost(j,q) = SRScost_final + launchCost(j,q);
     end
 end
 
