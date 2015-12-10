@@ -48,7 +48,7 @@ for q = 1:length(iEff)
         launchmTot(j,q) = m_inert_0(j,q)+ m_prop_0(j,q)+ m_inert_2(j,q)+ m_prop_2(j,q);
         SRScost(j,q) = CostCalc(SRSmInert, SRSmProp(j,q));
         launchCost(j,q) = CostCalc((m_inert_0(j,q)+m_inert_2(j,q)), (m_prop_0(j,q)+m_prop_2(j,q)));
-        if SRScost(j,q) > 1000E7 || launchCost(j,q) > 1000E7
+        if SRScost(j,q) > 3E7 || launchCost(j,q) > 3E7
             SRScost(j,q) = NaN;
             launchCost(j,q) = NaN;
         end

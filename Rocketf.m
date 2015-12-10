@@ -21,7 +21,7 @@ ISP = 414; %[s]  + LOX
 %Two Stage
 ISP1 = 311; %[s] Kerosine + LOX
 ISP2 = 451; %[s] H + LOX
-Fin1 = 0.91; %0.08;
+Fin1 = 0.091; %0.08;
 Fin2 = 0.097; %
 
 %---Inputs---
