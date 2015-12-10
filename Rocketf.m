@@ -1,4 +1,4 @@
-function [inc, delV1_optPercent, m_inert_0, m_prop_0, m_inert_2, m_prop_2 ] = Rocketf( azimuth, m_pay )
+function [m_inert_0, m_prop_0, m_inert_2, m_prop_2 ] = Rocketf( azimuth, m_pay )
 %UNTITLED3 Summary of this function goes here
 %   Detailed explanation goes here
 %
@@ -21,13 +21,13 @@ ISP = 414; %[s]  + LOX
 %Two Stage
 ISP1 = 311; %[s] Kerosine + LOX
 ISP2 = 451; %[s] H + LOX
-Fin1 = 0.091; %0.08;
-Fin2 = 0.097; %0.13;
+Fin1 = 0.91; %0.08;
+Fin2 = 0.097; %
 
 %---Inputs---
 %m_pay = 15000; % [kg] payload mass
 alt = 200*1000; % [m] circular orbit altitude
-latitude = 28.5233 .*(pi/180); %[rad] location of cape canaveral
+latitude = 13.5761*(pi/180); %[rad] location of cape canaveral
 azimuth = azimuth*(pi/180); %[rad] conversion
 inc = acos(sin(azimuth)*cos(latitude));
 %inc = 45 .*(pi/180); %[rad] desired inclination
@@ -73,21 +73,19 @@ delV1_optPercent = ratio(ind)*100;
 delV1_opt = delV1(ind);
 %---Cost---
 m_inert_0 = m_inert2_0(ind);
-m_prop_0 = m_prop2_0(ind);
+m_prop_0 = 1.05*m_prop2_0(ind);
 %Cost of 2 stage [kg]*[$/kg] = [$]
 m_inert_2 = m_inert2_2(ind);
-m_prop_2 = m_prop2_2(ind); %Cost of 1 stage
+m_prop_2 = 1.05*m_prop2_2(ind); %Cost of 1 stage
 
-inc = inc*180/pi;
-
-if m_inert_0 < 0 || m_prop_0 < 0 || m_inert_2 < 0 || m_prop_2 < 0
-    m_inert_0 = NaN;
-    m_prop_0 = NaN;
-    m_inert_2 = NaN;
-    m_prop_2 = NaN;
-    inc = NaN;
-    delV1_optPercent = NaN;
-end
+% if m_inert_0 < 0 || m_prop_0 < 0 || m_inert_2 < 0 || m_prop_2 < 0 || delV1_optPercent == 10
+%     m_inert_0 = NaN;
+%     m_prop_0 = NaN;
+%     m_inert_2 = NaN;
+%     m_prop_2 = NaN;
+%     inc = NaN;
+%     delV1_optPercent = NaN;
+% end
 
 
 

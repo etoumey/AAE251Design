@@ -28,24 +28,27 @@ close all
 clear all
 
 %--Constants---
-Lat = 28.4556;  %[degrees] N launch latitude 
+Lat = 13.5761;  %[degrees] N launch latitude 
 SRSmPay = 500;  %[kg] SRS payload: capture arm
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %       CHANGE LAST ARGUMENT OF LINSPACE TO ALTER RESOLUTION              %
-B = linspace(35,120,100);                                               %
-iEff = linspace(0,90,100);                                              %
+B = linspace(90,270,100);                                               %
+iEff = linspace(0,180,100);                                              %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 inclination = acosd(sind(B).*cosd(Lat));
 
 for q = 1:length(iEff)
+    q
     for j = 1:length(B)
-        [SRSmProp(j,q), SRSmInert] = SRSf(abs(iEff(q)-inclination(j)));
+        inclinationChange(j,q) = abs((iEff(q)-inclination(j)));
+        [SRSmProp(j,q), SRSmInert] = SRSf(inclinationChange(j,q));
         SRSmTot(j,q) = (SRSmProp(j,q)+SRSmInert+SRSmPay);
-        [inc, delV1_optPercent(j,q), m_inert_0(j,q), m_prop_0(j,q), m_inert_2(j,q), m_prop_2(j,q) ] = Rocketf(B(j), SRSmTot(j,q));
+        [m_inert_0(j,q), m_prop_0(j,q), m_inert_2(j,q), m_prop_2(j,q) ] = Rocketf(B(j), SRSmTot(j,q));
+        launchmTot(j,q) = m_inert_0(j,q)+ m_prop_0(j,q)+ m_inert_2(j,q)+ m_prop_2(j,q);
         SRScost(j,q) = CostCalc(SRSmInert, SRSmProp(j,q));
-        launchCost(j,q) = CostCalc(m_inert_0(j,q)+m_inert_2(j,q), m_prop_0(j,q)+m_prop_2(j,q));
-        if SRScost(j,q) > 3E7 || launchCost(j,q) > 3E7
+        launchCost(j,q) = CostCalc((m_inert_0(j,q)+m_inert_2(j,q)), (m_prop_0(j,q)+m_prop_2(j,q)));
+        if SRScost(j,q) > 1000E7 || launchCost(j,q) > 1000E7
             SRScost(j,q) = NaN;
             launchCost(j,q) = NaN;
         end
@@ -53,49 +56,43 @@ for q = 1:length(iEff)
     end
 end
 
-[idealCost, idealInd] = min(transpose(totalCost));
-idealAzimuth = B(idealInd); 
-%for ii = 1:length(idealAzimuth)
-%    [idealSRSmProp(ii), idealSRSmInert(ii)] = SRSf(abs(acosd(sind(idealAzimuth(ii)).*cosd(Lat))-iEff));
-%end
+[idealCost, idealInd1] = min(transpose(totalCost));
+idealAzimuth = B(idealInd1); 
+for ii = 1:length(idealAzimuth)
+    [idealSRSmProp(ii), idealSRSmInert(ii)] = SRSf(abs(acosd(sind(idealAzimuth(ii)).*cosd(Lat))-iEff(ii)));
+end
 
-%[SRSmProp_final, idealInd] = max(idealSRSmProp);
-%SRSmInert_final = idealSRSmInert(idealInd);
-%[inc, idealdelV1_optPercent, idealm_inert_0, idealm_prop_0, idealm_inert_2, idealm_prop_2] = Rocketf(idealAzimuth(idealInd), SRSmInert_final+SRSmProp_final+SRSmPay);
-
-
-%surf(iEff, B, totalCost)
-%zlim([0 4E7]);
+[SRSmProp_final, idealInd2] = max(idealSRSmProp);
+SRSmInert_final = idealSRSmInert(idealInd2);
+SRSmTot_final = SRSmProp_final + SRSmInert_final + SRSmPay;
+SRScost_final = CostCalc(SRSmInert_final, SRSmProp_final);
 
 figure(1)
 plot(iEff, idealAzimuth)
 title('Ideal Azimuth for Inclination of Capture');
 xlabel('Inclination of Capture')
 ylabel('Launch Azimuth')
-figure;
+
+figure(2);
 plot(iEff, idealCost)
 title('Ideal Total Cost for Inclination of Capture')
 xlabel('Inclination of Capture')
 ylabel('Ideal Total Cost')
 
-
-figure(2)
+figure(3)
 surfc(B, iEff, totalCost,  'LineStyle', 'none')
 %hold on
 %scatter3(idealAzimuth, iEff, idealCost,'r', 'Filled')
-legend('Total Cost of Launch and Capture', 'Lowest Cost Profile', 'Location', 'southoutside')
-ylabel('Inclination of Satellite');
-xlabel('Launch Azimuth')
-zlabel('Total Cost')
-figure(3)
-contour(B, iEff, totalCost,20)
+%title('Total Cost of Launch and Capture')
+ylabel('Inclination of Satellite (deg)');
+xlabel('Launch Azimuth (deg)')
+zlabel('Total Cost (USD)')
+figure(4)
+contour(B, iEff, totalCost,24)
 hold on
 plot(idealAzimuth, iEff, 'r', 'LineWidth', 4)
 legend('Total Cost of Launch and Capture', 'Lowest Cost Profile', 'Location', 'southoutside')
-ylabel('Inclination of Satellite');
-xlabel('Launch Azimuth')
-zlabel('Total Cost')
+ylabel('Inclination of Satellite (deg)');
+xlabel('Launch Azimuth (deg)')
+%zlabel('Total Cost (USD)')
 hold off
-
-figure(4)
-plot(iEff, idealCost)
