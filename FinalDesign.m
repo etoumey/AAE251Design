@@ -33,18 +33,18 @@ SRSmPay = 500;  %[kg] SRS payload: capture arm
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %       CHANGE LAST ARGUMENT OF LINSPACE TO ALTER RESOLUTION              %
-B = linspace(90,270,100);                                               %
-iEff = linspace(0,180,100);                                              %
+B = linspace(90,270,1000);                                               %
+iEff = linspace(0,180,1000);                                              %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 inclination = acosd(sind(B).*cosd(Lat));
-
+SRSmTot_final = 2.1881e+03;
 for q = 1:length(iEff)
     q
     for j = 1:length(B)
         inclinationChange(j,q) = abs((iEff(q)-inclination(j)));
         [SRSmProp(j,q), SRSmInert] = SRSf(inclinationChange(j,q));
         SRSmTot(j,q) = (SRSmProp(j,q)+SRSmInert+SRSmPay);
-        [m_inert_0(j,q), m_prop_0(j,q), m_inert_2(j,q), m_prop_2(j,q) ] = Rocketf(B(j), SRSmTot(j,q));
+        [m_inert_0(j,q), m_prop_0(j,q), m_inert_2(j,q), m_prop_2(j,q) ] = Rocketf(B(j), SRSmTot_final);%(j,q));
         launchmTot(j,q) = m_inert_0(j,q)+ m_prop_0(j,q)+ m_inert_2(j,q)+ m_prop_2(j,q);
         SRScost(j,q) = CostCalc(SRSmInert, SRSmProp(j,q));
         launchCost(j,q) = CostCalc((m_inert_0(j,q)+m_inert_2(j,q)), (m_prop_0(j,q)+m_prop_2(j,q)));

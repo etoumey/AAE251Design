@@ -49,7 +49,7 @@ delv_tot =  delv_ideal + delV_grav + delV_drag + delV_steer; % [m/s] Delta V req
 
 %% ---Comparing 1 and 2 stage rocket with delV range---
 %delv_tot = 5:0.01:10; % [km/s]
-ratio = linspace(0.1,0.6,1000);
+ratio = .28;%linspace(0.1,0.6,1000);
 delV1 = delv_tot.*ratio;
 delV2 = delv_tot - delV1;
 
