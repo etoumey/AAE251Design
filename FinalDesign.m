@@ -33,12 +33,12 @@ SRSmPay = 1500;  %[kg] SRS payload: capture arm
 %SRSmTot_final = 5.5622e+03;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %       CHANGE LAST ARGUMENT OF LINSPACE TO ALTER RESOLUTION              %
-B = linspace(90,270,100);                                               %
-iEff = linspace(0,180,100);                                              %
+B = linspace(90,270,1000);                                               %
+iEff = linspace(0,180,1000);                                              %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 inclination = acosd(sind(B).*cosd(Lat));
 SRSmTot_final =  5.4184e+03;
-%SRSmTot_final = 3.9184e+03;
+
 %SRSmInert_final = 335.4539;
 %SRSmProp_final = 2.5830e+03;
 %SRScost_final = CostCalc(SRSmInert_final, SRSmProp_final);
